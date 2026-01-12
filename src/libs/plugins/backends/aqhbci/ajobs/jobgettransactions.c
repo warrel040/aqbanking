@@ -143,6 +143,7 @@ AH_JOB *_createJob_HKKAZ(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
 AH_JOB *_createJob_DKKKU(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
 {
   AH_JOB *j;
+  GWEN_DB_NODE *dbArgs;
 
   j=AH_AccountJob_new("JobGetTransactionsCreditCard", pro, u, account);
   if (j==NULL) {
@@ -158,6 +159,8 @@ AH_JOB *_createJob_DKKKU(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
   AH_Job_SetSupportedCommand(j, AB_Transaction_CommandGetTransactions);
 
   AH_AccountJob_WriteNationalAccountInfoToArgs(j);
+  dbArgs=AH_Job_GetArguments(j);
+  GWEN_DB_SetCharValue(dbArgs, GWEN_DB_FLAGS_DEFAULT, "accountNumber", AB_Account_GetAccountNumber(account));
 
   return j;
 }
@@ -167,6 +170,7 @@ AH_JOB *_createJob_DKKKU(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
 AH_JOB *_createJob_HKKKU(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
 {
   AH_JOB *j;
+  GWEN_DB_NODE *dbArgs;
 
   j=AH_AccountJob_new("JobGetTransactionsCreditCard2", pro, u, account);
   if (j==NULL) {
@@ -182,6 +186,8 @@ AH_JOB *_createJob_HKKKU(AB_PROVIDER *pro, AB_USER *u, AB_ACCOUNT *account)
   AH_Job_SetSupportedCommand(j, AB_Transaction_CommandGetTransactions);
 
   AH_AccountJob_WriteNationalAccountInfoToArgs(j);
+  dbArgs=AH_Job_GetArguments(j);
+  GWEN_DB_SetCharValue(dbArgs, GWEN_DB_FLAGS_DEFAULT, "accountNumber", AB_Account_GetAccountNumber(account));
 
   return j;
 }
