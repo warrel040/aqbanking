@@ -167,6 +167,8 @@ void AH_Account_Flags_toDb(GWEN_DB_NODE *db, const char *name,
     GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, "sepaPreferSingleDebitNote");
   if (flags & AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD)
     GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, "preferCamtDownload");
+  if (flags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO)
+    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, "getTransForceNtlAccountInfo");
 }
 
 
@@ -196,6 +198,8 @@ uint32_t AH_Account_Flags_fromDb(GWEN_DB_NODE *db, const char *name)
       fl|=AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE;
     else if (strcasecmp(s, "preferCamtDownload")==0)
       fl|=AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD;
+    else if (strcasecmp(s, "getTransForceNtlAccountInfo")==0)
+      fl|=AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO;
     else {
       DBG_WARN(AQHBCI_LOGDOMAIN, "Unknown account flag \"%s\"", s);
     }

@@ -46,6 +46,7 @@
         <widget   type="checkBox"   name="sepaPreferSingleDebitNoteCheck" text="Prefer Single SEPA Debit Note" />
 
         <widget   type="checkBox"   name="preferCamtDownloadCheck"        text="Prefer Statement Download as CAMT" />
+        <widget   type="checkBox"   name="getTransForceNtlCheck"          text="Force National Account Specs for GetTransactions Job" />
       </widget>
 
     </widget>

@@ -68,6 +68,7 @@
 #define ID_SEPAPREFSINGLEXFER_CHECK    "sepaPreferSingleTransferCheck"
 #define ID_SEPAPREFSINGLEDEBIT_CHECK   "sepaPreferSingleDebitNoteCheck"
 #define ID_PREFCAMTDOWNLOAD_CHECK      "preferCamtDownloadCheck"
+#define ID_GETTRANSFORCENTL_CHECK      "getTransForceNtlCheck"
 
 #define ID_COUNTRY_EDIT                "countryEdit"
 #define ID_BANKCODE_EDIT               "bankCodeEdit"
@@ -473,6 +474,8 @@ void _accountFlagsToGui(GWEN_DIALOG *dlg, uint32_t aflags)
                              (aflags & AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE)?1:0, 0);
   GWEN_Dialog_SetIntProperty(dlg, ID_PREFCAMTDOWNLOAD_CHECK, GWEN_DialogProperty_Value, 0,
                              (aflags & AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD)?1:0, 0);
+  GWEN_Dialog_SetIntProperty(dlg, ID_GETTRANSFORCENTL_CHECK, GWEN_DialogProperty_Value, 0,
+                             (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO)?1:0, 0);
 }
 
 
@@ -491,6 +494,8 @@ uint32_t _accountFlagsFromGui(GWEN_DIALOG *dlg)
     aflags|=AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE;
   if (GWEN_Dialog_GetIntProperty(dlg, ID_PREFCAMTDOWNLOAD_CHECK, GWEN_DialogProperty_Value, 0, 0))
     aflags|=AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD;
+  if (GWEN_Dialog_GetIntProperty(dlg, ID_GETTRANSFORCENTL_CHECK, GWEN_DialogProperty_Value, 0, 0))
+    aflags|=AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO;
   return aflags;
 }
 

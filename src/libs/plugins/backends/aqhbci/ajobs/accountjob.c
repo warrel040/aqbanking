@@ -56,10 +56,15 @@ AH_JOB *AH_AccountJob_new(const char *name,
   const char *s;
   const char *sAccountNumOrIban=NULL;
   int jobVersion=0;
+  uint32_t uflags;
+  uint32_t aflags;
 
   assert(name);
   assert(u);
   assert(account);
+
+  uflags=AH_User_GetFlags(u);
+  aflags=AH_Account_GetFlags(account);
 
   /* this might later be removed, since all accounts should now have a suffix reported by the bank,
    * and if an account doesn't, it is just not needed anymore */
@@ -81,7 +86,8 @@ AH_JOB *AH_AccountJob_new(const char *name,
   dbArgs=AH_Job_GetArguments(j);
   assert(dbArgs);
 
-  if (AH_User_GetFlags(u) & AH_USER_FLAGS_SEPA_ALLOWNATIONALACCSPEC) {
+  if ((uflags & AH_USER_FLAGS_SEPA_ALLOWNATIONALACCSPEC) ||
+      (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO)) {
     DBG_NOTICE(AQHBCI_LOGDOMAIN, "Adding national account specs for SEPA jobs");
     s=AB_Account_GetAccountNumber(account);
     if (s && *s) {
