@@ -475,7 +475,7 @@ void _accountFlagsToGui(GWEN_DIALOG *dlg, uint32_t aflags)
   GWEN_Dialog_SetIntProperty(dlg, ID_PREFCAMTDOWNLOAD_CHECK, GWEN_DialogProperty_Value, 0,
                              (aflags & AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD)?1:0, 0);
   GWEN_Dialog_SetIntProperty(dlg, ID_GETTRANSFORCENTL_CHECK, GWEN_DialogProperty_Value, 0,
-                             (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO)?1:0, 0);
+                             (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO)?1:0, 0);
 }
 
 
@@ -495,7 +495,7 @@ uint32_t _accountFlagsFromGui(GWEN_DIALOG *dlg)
   if (GWEN_Dialog_GetIntProperty(dlg, ID_PREFCAMTDOWNLOAD_CHECK, GWEN_DialogProperty_Value, 0, 0))
     aflags|=AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD;
   if (GWEN_Dialog_GetIntProperty(dlg, ID_GETTRANSFORCENTL_CHECK, GWEN_DialogProperty_Value, 0, 0))
-    aflags|=AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO;
+    aflags|=AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO;
   return aflags;
 }
 

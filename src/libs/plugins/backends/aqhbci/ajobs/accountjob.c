@@ -87,18 +87,18 @@ AH_JOB *AH_AccountJob_new(const char *name,
   assert(dbArgs);
 
   if ((uflags & AH_USER_FLAGS_SEPA_ALLOWNATIONALACCSPEC) ||
-      (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCONTINFO)) {
+      (aflags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO)) {
     DBG_NOTICE(AQHBCI_LOGDOMAIN, "Adding national account specs for SEPA jobs");
     s=AB_Account_GetAccountNumber(account);
     if (s && *s) {
       GWEN_DB_SetCharValue(dbArgs, GWEN_DB_FLAGS_DEFAULT, "accountId", s);
       sAccountNumOrIban=s;
     }
-  
+
     s=AB_Account_GetSubAccountId(account);
     if (s && *s)
       GWEN_DB_SetCharValue(dbArgs, GWEN_DB_FLAGS_DEFAULT, "accountSubId", s);
-  
+
     s=AB_Account_GetBankCode(account);
     if (s && *s)
       GWEN_DB_SetCharValue(dbArgs, GWEN_DB_FLAGS_DEFAULT, "bankCode", s);
