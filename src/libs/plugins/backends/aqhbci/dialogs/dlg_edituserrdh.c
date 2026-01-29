@@ -286,7 +286,8 @@ int _fromGui(GWEN_DIALOG *dlg, AB_USER *u, int quiet)
     flags|=AH_USER_FLAGS_BANK_DOESNT_SIGN;
   if (GWEN_Dialog_GetIntProperty(dlg, "bankUsesSignSeqCheck", GWEN_DialogProperty_Value, 0, 0))
     flags|=AH_USER_FLAGS_BANK_USES_SIGNSEQ;
-  AH_User_SetFlags(u, flags);
+  if (u)
+    AH_User_SetFlags(u, flags);
 
   return 0;
 }
