@@ -21,6 +21,7 @@
 
 #include <aqbanking/banking_be.h>
 #include <aqbanking/backendsupport/account.h>
+#include <aqbanking/banking_l.h>
 
 #include <gwenhywfar/debug.h>
 #include <gwenhywfar/misc.h>
@@ -29,23 +30,7 @@
 
 
 /* ------------------------------------------------------------------------------------------------
- * definitions
- * ------------------------------------------------------------------------------------------------
- */
-
-#define S_FLAGS_PREFER_SINGLE_TRANSFER        "preferSingleTransfer"
-#define S_FLAGS_PREFER_SINGLE_DEBITNOTE       "preferSingleDebitNote"
-#define S_FLAGS_KTV2                          "ktv2"
-#define S_FLAGS_SEPA                          "sepa"
-#define S_FLAGS_SEPA_PREFER_SINGLE_TRANSFER   "sepaPreferSingleTransfer"
-#define S_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE  "sepaPreferSingleDebitNote"
-#define S_FLAGS_PREFER_CAMT_DOWNLOAD          "preferCamtDownload"
-#define S_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO "getTransForceNtlAccountInfo"
-
-
-
-/* ------------------------------------------------------------------------------------------------
- * global vars
+ * global vars/statics
  * ------------------------------------------------------------------------------------------------
  */
 
@@ -53,11 +38,24 @@ GWEN_INHERIT(AB_ACCOUNT, AH_ACCOUNT)
 
 
 
+static AB_FLAGDEF _accountFlagDefs[]={
+  {AH_BANK_FLAGS_PREFER_SINGLE_TRANSFER,        "preferSingleTransfer"},
+  {AH_BANK_FLAGS_PREFER_SINGLE_DEBITNOTE,       "preferSingleDebitNote"},
+  {AH_BANK_FLAGS_KTV2,                          "ktv2"},
+  {AH_BANK_FLAGS_SEPA,                          "sepa"},
+  {AH_BANK_FLAGS_SEPA_PREFER_SINGLE_TRANSFER,   "sepaPreferSingleTransfer"},
+  {AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE,  "sepaPreferSingleDebitNote"},
+  {AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD,          "preferCamtDownload"},
+  {AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO, "getTransForceNtlAccountInfo"},
+  {0, NULL}
+};
+
+
+
 /* ------------------------------------------------------------------------------------------------
  * implementations
  * ------------------------------------------------------------------------------------------------
  */
-
 
 AB_ACCOUNT *AH_Account_new(AB_PROVIDER *pro)
 {
@@ -177,63 +175,16 @@ AH_HBCI *AH_Account_GetHbci(const AB_ACCOUNT *a)
 
 
 
-void AH_Account_Flags_toDb(GWEN_DB_NODE *db, const char *name,
-                           uint32_t flags)
+void AH_Account_Flags_toDb(GWEN_DB_NODE *db, const char *name, uint32_t flags)
 {
-  GWEN_DB_DeleteVar(db, name);
-  if (flags & AH_BANK_FLAGS_PREFER_SINGLE_TRANSFER)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_PREFER_SINGLE_TRANSFER);
-  if (flags & AH_BANK_FLAGS_PREFER_SINGLE_DEBITNOTE)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_PREFER_SINGLE_DEBITNOTE);
-  if (flags & AH_BANK_FLAGS_KTV2)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_KTV2);
-  if (flags & AH_BANK_FLAGS_SEPA)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_SEPA);
-  if (flags & AH_BANK_FLAGS_SEPA_PREFER_SINGLE_TRANSFER)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_SEPA_PREFER_SINGLE_TRANSFER);
-  if (flags & AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE);
-  if (flags & AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_PREFER_CAMT_DOWNLOAD);
-  if (flags & AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO)
-    GWEN_DB_SetCharValue(db, GWEN_DB_FLAGS_DEFAULT, name, S_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO);
+  AB_Banking_FlagsToDb(db, _accountFlagDefs, name, flags);
 }
 
 
 
 uint32_t AH_Account_Flags_fromDb(GWEN_DB_NODE *db, const char *name)
 {
-  uint32_t fl=0;
-  int i;
-
-  for (i=0; ; i++) {
-    const char *s;
-
-    s=GWEN_DB_GetCharValue(db, name, i, 0);
-    if (!s)
-      break;
-    if (strcasecmp(s, S_FLAGS_PREFER_SINGLE_TRANSFER)==0)
-      fl|=AH_BANK_FLAGS_PREFER_SINGLE_TRANSFER;
-    else if (strcasecmp(s, S_FLAGS_PREFER_SINGLE_DEBITNOTE)==0)
-      fl|=AH_BANK_FLAGS_PREFER_SINGLE_DEBITNOTE;
-    else if (strcasecmp(s, S_FLAGS_KTV2)==0)
-      fl|=AH_BANK_FLAGS_KTV2;
-    else if (strcasecmp(s, S_FLAGS_SEPA)==0)
-      fl|=AH_BANK_FLAGS_SEPA;
-    else if (strcasecmp(s, S_FLAGS_SEPA_PREFER_SINGLE_TRANSFER)==0)
-      fl|=AH_BANK_FLAGS_SEPA_PREFER_SINGLE_TRANSFER;
-    else if (strcasecmp(s, S_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE)==0)
-      fl|=AH_BANK_FLAGS_SEPA_PREFER_SINGLE_DEBITNOTE;
-    else if (strcasecmp(s, S_FLAGS_PREFER_CAMT_DOWNLOAD)==0)
-      fl|=AH_BANK_FLAGS_PREFER_CAMT_DOWNLOAD;
-    else if (strcasecmp(s, S_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO)==0)
-      fl|=AH_BANK_FLAGS_GETTRANS_FORCE_NTLACCOUNTINFO;
-    else {
-      DBG_WARN(AQHBCI_LOGDOMAIN, "Unknown account flag \"%s\"", s);
-    }
-  }
-
-  return fl;
+  return AB_Banking_FlagsFromDb(db, _accountFlagDefs, name);
 }
 
 
